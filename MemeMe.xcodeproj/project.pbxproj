@@ -35,6 +35,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A41748DA24BC95F3002D2605 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		A478F7EB24AA5CEA002F8D36 = {
 			isa = PBXGroup;
 			children = (
@@ -60,6 +67,7 @@
 				A478F7FE24AA5CEC002F8D36 /* Assets.xcassets */,
 				A478F80024AA5CEC002F8D36 /* LaunchScreen.storyboard */,
 				A478F80324AA5CEC002F8D36 /* Info.plist */,
+				A41748DA24BC95F3002D2605 /* Resources */,
 			);
 			path = MemeMe;
 			sourceTree = "<group>";

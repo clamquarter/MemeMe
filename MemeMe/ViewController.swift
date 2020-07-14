@@ -20,23 +20,43 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     let memeTextAttributes: [NSAttributedString.Key: Any] = [
         NSAttributedString.Key.strokeColor: UIColor.black,
         NSAttributedString.Key.foregroundColor: UIColor.white,
-        NSAttributedString.Key.font: UIFont(name: "Impact", size: 36)!,
+        NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-CondensedBlack", size: 36)!,
         NSAttributedString.Key.strokeWidth: 3.0
     ]
     
-  
+    //MARK: - Structs
+    struct Meme {
+        var topText: String
+        var bottomText: String
+        var originalImage: UIImageView
+       var memedImage: UIImage
+    }
+    
+    //MARK: - Override Functions
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
+        //Text Field attributes are set here.
         topText.defaultTextAttributes = memeTextAttributes
         bottomText.defaultTextAttributes = memeTextAttributes
+        topText.textAlignment = .center
+        bottomText.textAlignment = .center
+      
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
+    subscribeToKeyboardNotifications()
     }
-
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        unsubscribeFromKeyboardNotifications()
+    }
+    
+    
     //MARK: -Actions
     @IBAction func pickAnImage(_ sender: Any) {
         let imagePicker = UIImagePickerController()
@@ -52,17 +72,61 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         present(imagePicker, animated: true, completion: nil)
     }
     
-    
+    //MARK: -Functions & Things
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let image = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
         memeImage.image = image
-    
         picker.dismiss(animated: true, completion: nil)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
+
+//shifts the view up when the keyboardWillShow notification comes.
+@objc func keyboardWillShow (_ notification:Notification) {
+    view.frame.origin.y -= getKeyboardHeight(notification)
+}
+
+func getKeyboardHeight(_ notification:Notification) -> CGFloat {
+    let userInfo = notification.userInfo
+    let keyboardSize = userInfo![UIResponder.keyboardFrameEndUserInfoKey] as! NSValue // of CGRect
+    return keyboardSize.cgRectValue.height
+}
+
+func subscribeToKeyboardNotifications() {
+    
+    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+}
+
+func unsubscribeFromKeyboardNotifications() {
+    
+    NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+    
+}
+    
+    func generateMemedImage() -> UIImage {
+        
+        // Render view to an image
+        UIGraphicsBeginImageContext(self.view.frame.size)
+        view.drawHierarchy(in: self.view.frame, afterScreenUpdates: true)
+        let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return memedImage
+    }
+    
+    func save() {
+        generateMemedImage()
+        navigationController?.setToolbarHidden(true, animated: false)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        let meme = Meme(topText: topText.text!, bottomText: bottomText.text!, originalImage: memeImage.image!, memedImage: memedImage.image
+        )
+    }
+
+//Moves the view back down after the user dismisses the keyboard.
+@objc func keyboardWillHide(_ notification:Notification) {
+    view.frame.origin.y = 0
+}
     
 }
 

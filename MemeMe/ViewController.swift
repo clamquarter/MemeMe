@@ -8,13 +8,16 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ViewController: UIViewController, UIImagePickerControllerDelegate,
+UINavigationControllerDelegate {
     //MARK: -Outlets
+    
     @IBOutlet var memeImage: UIImageView!
     @IBOutlet var cameraButton: UIBarButtonItem!
     @IBOutlet var albumButton: UIToolbar!
     @IBOutlet var topText: UITextField!
     @IBOutlet var bottomText: UITextField!
+    var memedImage: UIImage!
     
     //constant defining text attributes that have been applied to the meme text fields.
     let memeTextAttributes: [NSAttributedString.Key: Any] = [
@@ -28,7 +31,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     struct Meme {
         var topText: String
         var bottomText: String
-        var originalImage: UIImageView
+        var originalImage: UIImage
        var memedImage: UIImage
     }
     
@@ -110,17 +113,15 @@ func unsubscribeFromKeyboardNotifications() {
         // Render view to an image
         UIGraphicsBeginImageContext(self.view.frame.size)
         view.drawHierarchy(in: self.view.frame, afterScreenUpdates: true)
-        let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         return memedImage
     }
     
     func save() {
-        generateMemedImage()
         navigationController?.setToolbarHidden(true, animated: false)
         navigationController?.setNavigationBarHidden(true, animated: false)
-        let meme = Meme(topText: topText.text!, bottomText: bottomText.text!, originalImage: memeImage.image!, memedImage: memedImage.image
-        )
+        _ = Meme(topText: topText.text!, bottomText: bottomText.text!, originalImage: memeImage.image!, memedImage: memedImage) 
     }
 
 //Moves the view back down after the user dismisses the keyboard.

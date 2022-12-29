@@ -1,4 +1,6 @@
 # MemeMe
+
+<h3>Summary</h3>
 MemeMe is a project from the Udacity iOS Developer Nanodegree. It creates an image with text based on user input, aka a meme. 
 
 <h3>What I Learned</h3>
